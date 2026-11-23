@@ -248,7 +248,7 @@ window.CW={
       <input type="date" id="qaDate" class="mini-field" title="截止日期">
       <button type="button" class="link" data-day="0">今天</button>
       <button type="button" class="link" data-day="1">明天</button>
-      <select id="qaTime" class="mini-field" title="截止时间"></select>
+      <input type="time" id="qaTime" class="mini-field" title="截止时间（可任意设置）" value="18:00">
       <div class="seg prio" id="qaPrio">
         <button type="button" data-p="高">高</button>
         <button type="button" class="on" data-p="中">中</button>
@@ -287,7 +287,6 @@ window.CW={
 var TBL='任务清单';
 var CATS=['工作','生活','学习','购物','健康','其他'];
 var PRIOS=['高','中','低'];
-var TIMES=['09:00','10:00','12:00','14:00','16:00','18:00','20:00','21:00','23:59'];
 var REMS=['不提醒','到期时','提前30分钟','提前1小时','提前1天','提前3天'];
 var REM_MIN={'到期时':0,'提前30分钟':30,'提前1小时':60,'提前1天':1440,'提前3天':4320};
 var WEEK=['日','一','二','三','四','五','六'];
@@ -372,11 +371,6 @@ function computeStats(){
 function optList(opts,cur){
   return opts.map(function(o){ return '<option'+(String(o)===String(cur)?' selected':'')+'>'+esc(o)+'</option>'; }).join('');
 }
-function timeOpts(cur){
-  var o=TIMES.slice();
-  if(cur && TIMES.indexOf(String(cur))<0) o.unshift(String(cur));
-  return optList(o,cur);
-}
 function taskHtml(r){
   var id=String(r['编号']||'');
   var done=r['是否完成']==='是';
@@ -389,7 +383,7 @@ function taskHtml(r){
       +'<input class="field e-title" value="'+attrEsc(r['任务标题'])+'" maxlength="80" placeholder="任务标题">'
       +'<div class="e-grid">'
       +'<label>截止日期<input type="date" class="field e-date" value="'+attrEsc(r['截止日期']||'')+'"></label>'
-      +'<label>截止时间<select class="field e-time">'+timeOpts(r['截止时间'])+'</select></label>'
+      +'<label>截止时间<input type="time" class="field e-time" step="60" value="'+attrEsc(r['截止时间']||'')+'"></label>'
       +'<label>优先级<select class="field e-prio">'+optList(PRIOS,prio)+'</select></label>'
       +'<label>清单分类<select class="field e-cat">'+optList(CATS,r['清单分类']||'其他')+'</select></label>'
       +'<label>到期提醒<select class="field e-rem">'+optList(REMS,r['提醒设置']||'提前1小时')+'</select></label>'
@@ -460,7 +454,6 @@ function render(){
   document.getElementById('wall').innerHTML=html;
 }
 function buildSelects(){
-  document.getElementById('qaTime').innerHTML=optList(TIMES,'18:00');
   document.getElementById('qaCat').innerHTML=optList(CATS,'工作');
   document.getElementById('qaRem').innerHTML=optList(REMS,'提前1小时');
   document.getElementById('catSel').innerHTML='<option value="all">全部分类</option>'
